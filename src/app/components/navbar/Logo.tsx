@@ -13,6 +13,7 @@ function Logo() {
       height={150}
       width={150}
       src="/images/logo.png"
+      priority
     />
   );
 }
