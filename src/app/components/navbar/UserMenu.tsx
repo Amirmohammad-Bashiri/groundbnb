@@ -1,15 +1,23 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { signOut } from "next-auth/react";
 import { AiOutlineMenu } from "react-icons/ai";
 
 import Avatar from "../Avatar";
 import MenuItem from "./MenuItem";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
+import useLoginModal from "@/app/hooks/useLoginModal";
+import type { SafeUser } from "@/app/types";
 
-function UserMenu() {
+type UserMenuProps = {
+  currentUser?: SafeUser | null;
+};
+
+function UserMenu({ currentUser }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const registerModal = useRegisterModal();
+  const loginModal = useLoginModal();
 
   const toggleOpen = useCallback(() => {
     setIsOpen(prevState => !prevState);
@@ -28,7 +36,7 @@ function UserMenu() {
           onClick={toggleOpen}>
           <AiOutlineMenu />
           <div className="hidden md:block">
-            <Avatar />
+            <Avatar src={currentUser?.image} />
           </div>
         </button>
       </div>
@@ -36,8 +44,25 @@ function UserMenu() {
       {isOpen ? (
         <div className="absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white overflow-hidden right-0 top-12 text-sm">
           <div className="flex flex-col cursor-pointer">
-            <MenuItem onClickHandler={() => {}} label="Login" />
-            <MenuItem onClickHandler={registerModal.onOpen} label="Sign Up" />
+            {currentUser ? (
+              <>
+                <MenuItem onClickHandler={() => {}} label="My trips" />
+                <MenuItem onClickHandler={() => {}} label="My favorites" />
+                <MenuItem onClickHandler={() => {}} label="My reservations" />
+                <MenuItem onClickHandler={() => {}} label="My properties" />
+                <MenuItem onClickHandler={() => {}} label="Groundbnb my home" />
+                <hr />
+                <MenuItem onClickHandler={signOut} label="Log out" />
+              </>
+            ) : (
+              <>
+                <MenuItem onClickHandler={loginModal.onOpen} label="Login" />
+                <MenuItem
+                  onClickHandler={registerModal.onOpen}
+                  label="Sign Up"
+                />
+              </>
+            )}
           </div>
         </div>
       ) : null}
