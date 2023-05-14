@@ -98,6 +98,7 @@ function Modal(props: ModalProps) {
                     disabled={disabled}
                     label={actionLabel}
                     onClick={handleSubmit}
+                    type="submit"
                   />
                 </div>
                 {footer}

@@ -9,6 +9,7 @@ type buttonProps = {
   outline?: boolean;
   small?: boolean;
   icon?: IconType;
+  type?: "button" | "submit" | "reset" | undefined;
 };
 
 function Button({
@@ -18,6 +19,7 @@ function Button({
   outline,
   small,
   icon: Icon,
+  type = "button",
 }: buttonProps) {
   const buttonStyles = `relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transition w-full ${
     outline
@@ -31,7 +33,11 @@ function Button({
   } `;
 
   return (
-    <button onClick={onClick} disabled={disabled} className={buttonStyles}>
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={buttonStyles}>
       {Icon ? <Icon size={24} className="absolute left-4 top-3" /> : null}
       {label}
     </button>

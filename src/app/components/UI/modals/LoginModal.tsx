@@ -1,23 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { AiFillGithub } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 
-import useRegisterModal from "@/app/hooks/useRegisterModal";
 import useLoginModal from "@/app/hooks/useLoginModal";
+import useRegisterModal from "@/app/hooks/useRegisterModal";
 import Modal from "./Modal";
 import Heading from "@/app/components/Heading";
 import Input from "../inputs/Input";
 import Button from "../Button";
 
-function RegisterModal() {
+function LoginModal() {
   const [isLoading, setIsLoading] = useState(false);
-  const registerModal = useRegisterModal();
+  const router = useRouter();
   const loginModal = useLoginModal();
+  const registerModal = useRegisterModal();
 
   const {
     register,
@@ -25,7 +27,6 @@ function RegisterModal() {
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
-      name: "",
       email: "",
       password: "",
     },
@@ -35,10 +36,24 @@ function RegisterModal() {
     setIsLoading(true);
 
     try {
-      await axios.post("/api/register", data);
-      registerModal.onClose();
+      const result = await signIn("credentials", {
+        ...data,
+        redirect: false,
+      });
+
+      if (result?.ok) {
+        toast.success("Logged in successfully.");
+        router.refresh();
+        loginModal.onClose();
+      }
+
+      if (result?.error) {
+        throw new Error(result.error);
+      }
     } catch (error) {
-      toast.error("Something went wrong, please try again.");
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
     }
 
     setIsLoading(false);
@@ -46,20 +61,12 @@ function RegisterModal() {
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
-      <Heading title="Welcome to Groundbnb" subtitle="Create an account" />
+      <Heading title="Welcome to Groundbnb" subtitle="Log into your account" />
       <Input
         register={register}
         id="email"
         label="Email"
         type="email"
-        disabled={isLoading}
-        errors={errors}
-        required
-      />
-      <Input
-        register={register}
-        id="name"
-        label="Name"
         disabled={isLoading}
         errors={errors}
         required
@@ -94,14 +101,14 @@ function RegisterModal() {
 
       <div className="mt-4 font-light text-center text-neutral-500">
         <div className="flex justify-center gap-2 text-center">
-          <p>Already have an account?</p>
+          <p>Don&apos;t have an account?</p>
           <p
             onClick={() => {
-              registerModal.onClose();
-              loginModal.onOpen();
+              loginModal.onClose();
+              registerModal.onOpen();
             }}
             className="cursor-pointer text-neutral-800 hover:underline">
-            Log in
+            Sign up
           </p>
         </div>
       </div>
@@ -111,10 +118,10 @@ function RegisterModal() {
   return (
     <Modal
       disabled={isLoading}
-      isOpen={registerModal.isOpen}
-      title="Register"
+      isOpen={loginModal.isOpen}
+      title="Log in"
       actionLabel="Continue"
-      onClose={registerModal.onClose}
+      onClose={loginModal.onClose}
       onSubmit={handleSubmit(onSubmit)}
       body={bodyContent}
       footer={footerContent}
@@ -122,4 +129,4 @@ function RegisterModal() {
   );
 }
 
-export default RegisterModal;
+export default LoginModal;
