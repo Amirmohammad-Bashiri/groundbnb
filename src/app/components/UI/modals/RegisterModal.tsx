@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import axios from "axios";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -16,6 +18,7 @@ import Button from "../Button";
 
 function RegisterModal() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
 
@@ -36,12 +39,33 @@ function RegisterModal() {
 
     try {
       await axios.post("/api/register", data);
+      await signIn("credentials", {
+        ...data,
+        redirect: false,
+      });
+      router.refresh();
       registerModal.onClose();
+      toast.success("Signed up successfully.");
     } catch (error) {
       toast.error("Something went wrong, please try again.");
     }
 
     setIsLoading(false);
+  };
+
+  const handleSocialLogin = async (provider: "github" | "google") => {
+    setIsLoading(true);
+
+    try {
+      await signIn(provider, {
+        redirect: false,
+      });
+      router.refresh();
+      registerModal.onClose();
+      toast.success("Signed up successfully.");
+    } catch (error) {
+      toast.error("Something went wrong, please try again.");
+    }
   };
 
   const bodyContent = (
@@ -79,17 +103,17 @@ function RegisterModal() {
   const footerContent = (
     <div className="flex flex-col gap-4 mt-3">
       <hr />
-      <Button
+      {/* <Button
         outline
         label="Continue with Google"
         icon={FcGoogle}
-        onClick={() => {}}
-      />
+        onClick={() => handleSocialLogin("google")}
+      /> */}
       <Button
         outline
         label="Continue with Github"
         icon={AiFillGithub}
-        onClick={() => {}}
+        onClick={() => handleSocialLogin("github")}
       />
 
       <div className="mt-4 font-light text-center text-neutral-500">

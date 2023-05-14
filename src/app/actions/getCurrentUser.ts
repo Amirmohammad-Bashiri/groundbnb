@@ -4,7 +4,8 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import prisma from "@/app/libs/prismadb";
 
 export async function getSession() {
-  return await getServerSession(authOptions);
+  const result = await getServerSession(authOptions);
+  return result;
 }
 
 export async function getCurrentUser() {
@@ -23,7 +24,12 @@ export async function getCurrentUser() {
 
     if (!currentUser) return null;
 
-    return currentUser;
+    return {
+      ...currentUser,
+      createdAt: currentUser.createdAt.toISOString(),
+      updatedAt: currentUser.updatedAt.toISOString(),
+      emailVerified: currentUser.emailVerified?.toISOString() || null,
+    };
   } catch (error) {
     return null;
   }

@@ -7,6 +7,7 @@ import ToasterProvider from "./providers/ToasterProvider";
 
 import "./globals.css";
 import { getCurrentUser } from "./actions/getCurrentUser";
+import type { SafeUser } from "./types";
 
 const nunito = Nunito({ subsets: ["latin"] });
 
@@ -21,7 +22,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const currentUser = await getCurrentUser();
+  const currentUser = (await getCurrentUser()) as SafeUser | null;
 
   return (
     <html lang="en">
