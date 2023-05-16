@@ -59,20 +59,20 @@ function LoginModal() {
     setIsLoading(false);
   };
 
-  const handleSocialLogin = async (provider: "github" | "google") => {
-    setIsLoading(true);
+  // const handleSocialLogin = async (provider: "github" | "google") => {
+  //   setIsLoading(true);
 
-    try {
-      await signIn(provider, {
-        redirect: false,
-      });
-      router.refresh();
-      registerModal.onClose();
-      toast.success("Logged in successfully.");
-    } catch (error) {
-      toast.error("Something went wrong, please try again.");
-    }
-  };
+  //   try {
+  //     await signIn(provider, {
+  //       redirect: false,
+  //     });
+  //     router.refresh();
+  //     registerModal.onClose();
+  //     toast.success("Logged in successfully.");
+  //   } catch (error) {
+  //     toast.error("Something went wrong, please try again.");
+  //   }
+  // };
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
@@ -107,12 +107,12 @@ function LoginModal() {
         icon={FcGoogle}
         onClick={() => {}}
       /> */}
-      <Button
+      {/* <Button
         outline
         label="Continue with Github"
         icon={AiFillGithub}
         onClick={() => handleSocialLogin("github")}
-      />
+      /> */}
 
       <div className="mt-4 font-light text-center text-neutral-500">
         <div className="flex justify-center gap-2 text-center">
