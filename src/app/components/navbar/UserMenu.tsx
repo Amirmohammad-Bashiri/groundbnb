@@ -23,12 +23,20 @@ function UserMenu({ currentUser }: UserMenuProps) {
     setIsOpen(prevState => !prevState);
   }, []);
 
+  const onRent = useCallback(() => {
+    if (!currentUser) {
+      return loginModal.onOpen();
+    }
+
+    // Open rent modal
+  }, [currentUser, loginModal]);
+
   return (
     <div className="relative">
       <div className="flex items-center gap-3">
         <button
           className="hidden px-4 py-3 text-sm font-semibold transition rounded-full cursor-pointer md:block hover:bg-neutral-100"
-          onClick={() => {}}>
+          onClick={onRent}>
           Groundbnb your home
         </button>
         <button
