@@ -9,6 +9,7 @@ import MenuItem from "./MenuItem";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
 import useLoginModal from "@/app/hooks/useLoginModal";
 import type { SafeUser } from "@/app/types";
+import useRentModal from "@/app/hooks/useRentModal";
 
 type UserMenuProps = {
   currentUser?: SafeUser | null;
@@ -18,6 +19,7 @@ function UserMenu({ currentUser }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
+  const rentModal = useRentModal();
 
   const toggleOpen = useCallback(() => {
     setIsOpen(prevState => !prevState);
@@ -28,8 +30,8 @@ function UserMenu({ currentUser }: UserMenuProps) {
       return loginModal.onOpen();
     }
 
-    // Open rent modal
-  }, [currentUser, loginModal]);
+    rentModal.onOpen();
+  }, [currentUser, loginModal, rentModal]);
 
   return (
     <div className="relative">
@@ -58,7 +60,7 @@ function UserMenu({ currentUser }: UserMenuProps) {
                 <MenuItem onClickHandler={() => {}} label="My favorites" />
                 <MenuItem onClickHandler={() => {}} label="My reservations" />
                 <MenuItem onClickHandler={() => {}} label="My properties" />
-                <MenuItem onClickHandler={() => {}} label="Groundbnb my home" />
+                <MenuItem onClickHandler={onRent} label="Groundbnb my home" />
                 <hr />
                 <MenuItem onClickHandler={signOut} label="Log out" />
               </>
